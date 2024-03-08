@@ -48,3 +48,12 @@ class FileStorage:
                     class_name, obj_id = key.split('.')
                     obj_cls = eval(class_name)  # Convert class name to class
                     self.__objects[key] = obj_cls(**obj_dict)
+
+    def classes(self):
+        """
+        Returns a dictionary of valid classes in the storage.
+        """
+        return {
+            "BaseModel": BaseModel,
+            # Add other classes here if necessary
+        }
