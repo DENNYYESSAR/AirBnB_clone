@@ -129,16 +129,20 @@ class HBNBCommand(cmd.Cmd):
         elif len(args) < 4:
             print("** value missing **")
         else:
-            key = args[0] + "." + args[1]
+            key = "{}.{}".format(args[0], args[1])
             if key not in storage.all():
                 print("** no instance found **")
             else:
                 obj = storage.all()[key]
+                value = args[3].strip("\"'")
+
                 try:
-                    attr_type = type(getattr(obj, args[2]))
-                    setattr(obj, args[2], attr_type(args[3]))
-                    obj.save()
-                except Exception:
+                    attr_value = getattr(obj, args[2], str(args[3]))
+                    if not isinstance(attr_value, str):
+                        value = type(attr_value)(value)
+                    setattr(obj, args[2], value)
+                except ValueError as e:
+
                     obj.save()
 
 
