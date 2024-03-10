@@ -18,6 +18,15 @@ class HBNBCommand(cmd.Cmd):
     Class for the command interpreter.
     """
     prompt = "(hbnb) "
+    __classes = {
+        "BaseModel",
+        "User",
+        "State",
+        "City",
+        "Place",
+        "Amenity",
+        "Review"
+    }
 
     def do_quit(self, arg):
         """
