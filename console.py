@@ -32,6 +32,7 @@ def parse(arg):
         retl.append(curly_braces.group())
         return retl
 
+
 class HBNBCommand(cmd.Cmd):
     """
     Class for the command interpreter.
@@ -155,16 +156,26 @@ class HBNBCommand(cmd.Cmd):
 
     def do_all(self, arg):
         """
-        Prints all string representation of all instances based or not on
-        the class name.
+        Retrieve all instances of a class
+        Usage: <class name>.all()
         """
-        if not arg:
-            print([str(obj) for obj in storage.all().values()])
-        elif arg not in storage.classes():
+        argl = parse(arg)
+        if len(argl) > 0 and argl[0] not in HBNBCommand.__classes:
             print("** class doesn't exist **")
         else:
-            print([str(obj) for key, obj in storage.all().items()
-                  if key.split(".")[0] == arg])
+            objl = []
+            for obj in storage.all().values():
+                if len(argl) > 0 and argl[0] == obj.__class__.__name__:
+                    objl.append(obj.__str__())
+                elif len(argl) == 0:
+                    objl.append(obj.__str__())
+            print(objl)
+
+    def do_User(self, arg):
+        """
+        Retrieves all instances of User class.
+        """
+        self.do_all("User")
 
     def do_update(self, arg):
         """
