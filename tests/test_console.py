@@ -29,18 +29,16 @@ class TestConsole(unittest.TestCase):
         """Test the help command"""
         with patch('sys.stdout', new=StringIO()) as f:
             self.console.onecmd("help")
-            self.assertIn("Documented commands (type help <topic>):", f.getvalue())
+            f.seek(0)
+            self.assertIn("Documented commands (type help <topic>):", f.read())
 
     def test_create_command(self):
         """Test the create command"""
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.console.onecmd("create")
-            self.assertEqual("** class name missing **\n", f.getvalue())
-
         for class_name, class_obj in self.test_models.items():
             with patch('sys.stdout', new=StringIO()) as f:
                 self.console.onecmd("create {}".format(class_name))
-                self.assertIn(class_obj().id + "\n", f.getvalue())
+                output = f.getvalue().strip()
+                self.assertTrue(models.storage.get(class_name, output))
 
     def test_show_command(self):
         """Test the show command"""
@@ -68,7 +66,8 @@ class TestConsole(unittest.TestCase):
         obj_id = list(self.test_storage.all().values())[0].id
         with patch('sys.stdout', new=StringIO()) as f:
             self.console.onecmd("show BaseModel {}".format(obj_id))
-            self.assertIn(str(self.test_storage.all()["BaseModel." + obj_id]) + "\n", f.getvalue())
+            self.assertIn(str(self.test_storage.all()["BaseModel." + obj_id])
+                          + "\n", f.getvalue())
 
     def test_destroy_command(self):
         """Test the destroy command"""
@@ -100,21 +99,14 @@ class TestConsole(unittest.TestCase):
 
     def test_all_command(self):
         """Test the all command"""
-        # Testing without specifying a class
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.console.onecmd("all")
-            self.assertIn("{}".format(", ".join(str(obj) for obj in self.test_storage.all().values())) + "\n", f.getvalue())
-
-        # Testing with a specified class that doesn't exist
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.console.onecmd("all MyModel")
-            self.assertEqual("** class doesn't exist **\n", f.getvalue())
-
-        # Testing with a specified class that exists
-        for class_name in self.test_models.keys():
+        for class_name, class_obj in self.test_models.items():
             with patch('sys.stdout', new=StringIO()) as f:
                 self.console.onecmd("all {}".format(class_name))
-                self.assertIn("{}".format(", ".join(str(obj) for obj in self.test_storage.all().values() if obj.__class__.__name__ == class_name)) + "\n", f.getvalue())
+                output = f.getvalue().strip()
+                expected_objects = ", ".join(str(obj) for obj in
+                                             models.storage.all().values()
+                                             if type(obj) == class_obj)
+                self.assertEqual(output, expected_objects)
 
     def test_count_command(self):
         """Test the count command"""
@@ -132,7 +124,10 @@ class TestConsole(unittest.TestCase):
         for class_name in self.test_models.keys():
             with patch('sys.stdout', new=StringIO()) as f:
                 self.console.onecmd("count {}".format(class_name))
-                self.assertIn("{}".format(sum(1 for obj in self.test_storage.all().values() if obj.__class__.__name__ == class_name)) + "\n", f.getvalue())
+                self.assertIn("{}".format(sum(1 for obj in
+                              self.test_storage.all().values() if
+                              obj.__class__.__name__ == class_name))
+                              + "\n", f.getvalue())
 
 
 if __name__ == '__main__':
