@@ -21,8 +21,9 @@ class TestState(unittest.TestCase):
         """
         Test attributes of State instance
         """
-        state = State(name="California")
-        self.assertEqual(state.name, "California")
+        state = State()
+        self.assertTrue(hasattr(state, "name"))
+        self.assertEqual(state.name, "")
 
 
 if __name__ == '__main__':

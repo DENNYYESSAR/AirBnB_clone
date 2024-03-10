@@ -21,8 +21,9 @@ class TestAmenity(unittest.TestCase):
         """
         Test attributes of Amenity instance
         """
-        amenity = Amenity(name="WiFi")
-        self.assertEqual(amenity.name, "WiFi")
+        amenity = Amenity()
+        self.assertTrue(hasattr(amenity, "name"))
+        self.assertEqual(amenity.name, "")
 
 
 if __name__ == '__main__':

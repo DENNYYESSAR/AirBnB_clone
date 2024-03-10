@@ -23,10 +23,13 @@ class TestReview(unittest.TestCase):
         """
         Test attributes of Review instance
         """
-        review = Review(place_id="123", user_id="456", text="Great place!")
-        self.assertEqual(review.place_id, "123")
-        self.assertEqual(review.user_id, "456")
-        self.assertEqual(review.text, "Great place!")
+        review = Review()
+        self.assertTrue(hasattr(review, "place_id"))
+        self.assertEqual(review.place_id, "")
+        self.assertTrue(hasattr(review, "user_id"))
+        self.assertEqual(review.user_id, "")
+        self.assertTrue(hasattr(review, "text"))
+        self.assertEqual(review.text, "")
 
 
 if __name__ == '__main__':

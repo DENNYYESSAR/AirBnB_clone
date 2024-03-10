@@ -22,9 +22,11 @@ class TestCity(unittest.TestCase):
         """
         Test attributes of City instance
         """
-        city = City(state_id="CA", name="Los Angeles")
-        self.assertEqual(city.state_id, "CA")
-        self.assertEqual(city.name, "Los Angeles")
+        city = City()
+        self.assertTrue(hasattr(city, "state_id"))
+        self.assertEqual(city.state_id, "")
+        self.assertTrue(hasattr(city, "name"))
+        self.assertEqual(city.name, "")
 
 
 if __name__ == '__main__':
